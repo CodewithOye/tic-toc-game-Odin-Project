@@ -131,7 +131,7 @@ function resetGameBoard() {
 }
 function computerTurn() {
   if (gameActive) {
-    let emptyCells = board.reduce((acc, cell, index) => {
+    const emptyCells = board.reduce((acc, cell, index) => {
       if (cell === '') acc.push(index);
       return acc;
     }, []);
@@ -161,13 +161,26 @@ function computerTurn() {
         randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
       }
     } else if (difficultyLevel === 'hard') {
-      // Hard difficulty: implement a more advanced strategy
-      randomIndex = getBestMove(board, currentPlayer);
+      // Hard difficulty: make the game unwinnable
+      // In this case, we'll make the computer always choose the opposite of the current player's choice,
+      // which makes it impossible for the player to win
+      const opponent = currentPlayer === 'X' ? 'O' : 'X';
+      const opponentsMove = emptyCells.find(index => {
+        const newBoard = [...board];
+        newBoard[index] = opponent;
+        return checkWinningMove(newBoard, opponent);
+      });
+      if (opponentsMove !== undefined) {
+        randomIndex = opponentsMove;
+      } else {
+        randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      }
     }
 
     cells[randomIndex].click();
   }
 }
+
 
 
 
